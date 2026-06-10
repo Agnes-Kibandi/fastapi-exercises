@@ -34,12 +34,25 @@ def save_book(book:Book, db=Depends(get_db)):
     db.refresh(db_book)
     return db_book
 
+
+@app.get("/books/{book_id}",response_model=BookOut)
+def specific_book(book_id:int,db=Depends(get_db)):
+        
+    the_book=db.query(BookModel).filter(BookModel.id==book_id).first()
+
+    if not the_book:
+        raise  HTTPException(status_code=404,detail="not found")
+    return the_book
+    
+    
+
+
+
 @app.get("/books",response_model=list[BookOut])
 def get_books(db=Depends(get_db)):
     the_books=db.query(BookModel).all()
     return the_books
     
-
     
 
 @app.get("/")
