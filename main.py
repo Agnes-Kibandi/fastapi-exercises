@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from typing import Optional
 
 app=FastAPI()
 
@@ -19,5 +20,11 @@ def hobbies(hobby_id:int):
 def fun_facts():
     my_fun_facts={'gender':'female','age':37}
     return my_fun_facts
+
+@app.get("/search")
+def search_results(keyword: str="Nothing"):
+    return f" you searched for {keyword}."
+
+
 
 
