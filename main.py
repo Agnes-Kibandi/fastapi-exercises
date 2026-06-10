@@ -1,6 +1,12 @@
-from fastapi import FastAPI, HTTPException
+
+
+from fastapi import FastAPI, HTTPException, Depends
 from typing import Optional
 from pydantic import BaseModel
+from models import BookModel
+from database import engine,SessionLocal,Base
+
+Base.metadata.create_all(bind=engine)
 
 app=FastAPI()
 
@@ -13,6 +19,28 @@ class BookOut(BaseModel):
     title:str
     author:str
 
+def get_db():
+    db=SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.post("/books",response_model=BookOut)
+def save_book(book:Book, db=Depends(get_db)):
+    db_book=BookModel(title=book.title,author=book.author,year=book.year)
+    db.add(db_book)
+    db.commit()
+    db.refresh(db_book)
+    return db_book
+
+@app.get("/books",response_model=list[BookOut])
+def get_books(db=Depends(get_db)):
+    the_books=db.query(BookModel).all()
+    return the_books
+    
+
+    
 
 @app.get("/")
 def name():
@@ -37,7 +65,5 @@ def search_results(keyword: str="Nothing"):
     return f" you searched for {keyword}."
 
 
-@app.post("/books",response_model=Bookout)
-def create_book(book:Book):
-    return book
+
 
