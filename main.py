@@ -9,6 +9,11 @@ class Book(BaseModel):
     author:str
     year:int
 
+class BookOut(BaseModel):
+    title:str
+    author:str
+
+
 @app.get("/")
 def name():
     my_name="Agnes"
@@ -32,7 +37,7 @@ def search_results(keyword: str="Nothing"):
     return f" you searched for {keyword}."
 
 
-@app.post("/books",response_model=Book)
+@app.post("/books",response_model=Bookout)
 def create_book(book:Book):
     return book
 
