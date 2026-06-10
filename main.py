@@ -1,7 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from typing import Optional
+from pydantic import BaseModel
 
 app=FastAPI()
+
+class Book(BaseModel):
+    title:str
+    author:str
+    year:int
 
 @app.get("/")
 def name():
@@ -26,5 +32,7 @@ def search_results(keyword: str="Nothing"):
     return f" you searched for {keyword}."
 
 
-
+@app.post("/books",response_model=Book)
+def create_book(book:Book):
+    return book
 
