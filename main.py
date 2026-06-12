@@ -43,8 +43,6 @@ def specific_book(book_id:int,db=Depends(get_db)):
     if not the_book:
         raise  HTTPException(status_code=404,detail="not found")
     return the_book
-    
-    
 
 
 
